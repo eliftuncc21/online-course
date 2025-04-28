@@ -6,6 +6,8 @@ import org.example.onlinecourse.dto.response.CommentResponseDto;
 import org.example.onlinecourse.mapper.CommentMapper;
 import org.example.onlinecourse.model.Comment;
 import org.example.onlinecourse.repository.CommentRepository;
+import org.example.onlinecourse.repository.CourseRepository;
+import org.example.onlinecourse.repository.StudentRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,10 +16,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommentService {
     private final CommentRepository commentRepository;
+    private final StudentRepository studentRepository;
+    private final CourseRepository courseRepository;
     private final CommentMapper commentMapper;
 
     public CommentResponseDto save(CommentRequestDto commentRequestDto) {
+        Student student = studentRepository.findById(commentRequestDto.getStudentId()).orElse(null);
+        Course course = courseRepository.findById(commentRequestDto.getCourseId()).orElse(null);
         Comment comment = commentMapper.toComment(commentRequestDto);
+        comment.setStudent(student);
+        comment.setCourse(course);
         Comment dbComment = commentRepository.save(comment);
         return commentMapper.toCommentResponseDto(dbComment);
     }

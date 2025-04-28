@@ -19,11 +19,13 @@ public class CourseController {
         return courseService.save(courseRequestDto);
     }
 
+    @PreAuthorize("hasRole('STUDENT')")
     @GetMapping("/list-course")
     public List<CourseResponseDto> listCourse() {
         return courseService.getAllCourses();
     }
 
+    @PreAuthorize("hasRole('STUDENT')")
     @GetMapping("/list-course/{id}")
     public CourseResponseDto listCourseById(@PathVariable Long id) {
         return courseService.findCourseById(id);

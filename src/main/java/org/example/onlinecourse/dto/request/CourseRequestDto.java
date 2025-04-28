@@ -17,6 +17,6 @@ public class CourseRequestDto {
     private double price;
     private int courseDuration;
     private String courseUrl;
-    private InstructorRequestDto instructorId;
-    private CategoryRequestDto categoryId;
+    private Long instructorId;
+    private Long categoryId;
 }

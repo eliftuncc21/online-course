@@ -9,15 +9,22 @@ import org.example.onlinecourse.repository.CourseRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Locale.Category;
 
 @Service
 @RequiredArgsConstructor
 public class CourseService {
     private final CourseRepository courseRepository;
+    private final InstructorRepository instructorRepository;
+    private final CategoryRepository categoryRepository;
     private final CourseMapper courseMapper;
 
     public CourseResponseDto save(CourseRequestDto courseRequestDto) {
+        Instructor instructor = instructorRepository.findById(courseRequestDto.getInstructorId()).orElse(null);
+        Category category = categoryRepository.findById(courseRequestDto.getCategoryId()).orElse(null);
         Course course = courseMapper.toCourse(courseRequestDto);
+        course.setInstructor(instructor);
+        course.setCategory(category);
         Course savedCourse = courseRepository.save(course);
         return courseMapper.toCourseResponseDto(savedCourse);
     }
