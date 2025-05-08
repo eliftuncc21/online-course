@@ -1,13 +1,12 @@
 package org.example.onlinecourse.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.example.onlinecourse.dto.request.StudentFilterRequest;
 import org.example.onlinecourse.dto.request.StudentRequestDto;
 import org.example.onlinecourse.dto.response.StudentResponseDto;
-import org.example.onlinecourse.model.Student;
 import org.example.onlinecourse.service.StudentService;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,8 +20,12 @@ public class StudentController {
     }
 
     @GetMapping("/list-student")
-    public List<StudentResponseDto> findAllStudent() {
-        return studentService.getAllStudents();
+    public Page<StudentResponseDto> findAllStudent(StudentFilterRequest filterRequest,
+                                                   @RequestParam int page,
+                                                   @RequestParam int size,
+                                                   @RequestParam(defaultValue = "userId") String sortField,
+                                                   @RequestParam(defaultValue = "asc") String sortDir) {
+        return studentService.getAllStudents(filterRequest, page, size, sortField, sortDir);
     }
 
     @GetMapping("/list-student/{id}")

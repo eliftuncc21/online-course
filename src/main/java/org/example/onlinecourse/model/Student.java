@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,12 +16,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Student {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "student_id")
-    private Long studentId;
+public class Student extends User{
 
     @Column(name = "birth_date", nullable = false)
     private LocalDate birthDate;
@@ -35,14 +31,17 @@ public class Student {
     @Column(name = "total_course_count")
     private Integer totalCourseCount;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @UpdateTimestamp
+    @Column(name = "last_login_date")
+    private LocalDateTime lastLoginDate;
 
     @OneToMany(mappedBy = "student")
     private List<Enrollment> enrollments;
 
     @OneToMany(mappedBy = "student")
     private List<Comment> comments;
+
+    @OneToMany(mappedBy = "student")
+    private List<FavoriteCourse> favoriteCourses;
 
 }

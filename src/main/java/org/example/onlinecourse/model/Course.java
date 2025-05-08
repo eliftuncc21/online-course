@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -40,20 +39,27 @@ public class Course {
     @Column(name = "course_url")
     private String courseUrl;
 
-    @Column(name = "is_completed")
-    private boolean isCompleted;
+    @Column(name = "language")
+    private String language;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "difficulty", nullable = false)
+    private Difficulty difficulty;
 
     @ManyToOne
     @JoinColumn(name = "instructor_id")
     private Instructor instructor;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @JoinColumn(name = "sub_category_id")
+    private SubCategory subCategory;
 
     @OneToMany(mappedBy = "course")
     private List<Comment> comments;
 
     @OneToMany(mappedBy = "course")
     private List<Enrollment> enrollments;
+
+    @OneToMany(mappedBy = "course")
+    private List<FavoriteCourse> favoriteCourses;
 }

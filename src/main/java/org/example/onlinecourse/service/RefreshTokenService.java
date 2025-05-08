@@ -3,10 +3,13 @@ package org.example.onlinecourse.service;
 import lombok.RequiredArgsConstructor;
 import org.example.onlinecourse.dto.request.RefreshTokenRequestDto;
 import org.example.onlinecourse.dto.response.LoginResponseDto;
+import org.example.onlinecourse.exception.ErrorMessage;
+import org.example.onlinecourse.exception.MessageType;
 import org.example.onlinecourse.jwt.JwtService;
 import org.example.onlinecourse.model.RefreshToken;
 import org.example.onlinecourse.model.User;
 import org.example.onlinecourse.repository.RefreshTokenRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -30,12 +33,19 @@ public class RefreshTokenService {
         Optional<RefreshToken> optional = refreshTokenRepository.findByRefreshToken(refreshTokenRequest.getRefreshToken());
 
         if(optional.isEmpty()){
-            System.out.println("Refresh token not found: " + refreshTokenRequest.getRefreshToken());
+            throw new ErrorMessage(
+                    MessageType.REFRESH_TOKEN_NOT_FOUND,
+                    "Not found refresh token",
+                    HttpStatus.NOT_FOUND
+            );
         }
 
         RefreshToken refreshToken = optional.get();
         if(isTokenExpired(refreshToken.getExpiredDate())){
-            System.out.println("Refresh token expired: " + refreshToken.getExpiredDate());
+            throw new ErrorMessage(
+                    MessageType.REFRESH_TOKEN_EXPIRED,
+                    "Refresh Token Hatası",
+                    HttpStatus.UNAUTHORIZED);
         }
 
         String accessToken = jwtService.generateToken(refreshToken.getUser());

@@ -1,12 +1,12 @@
 package org.example.onlinecourse.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.example.onlinecourse.dto.request.CommentFilterRequest;
 import org.example.onlinecourse.dto.request.CommentRequestDto;
 import org.example.onlinecourse.dto.response.CommentResponseDto;
 import org.example.onlinecourse.service.CommentService;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,8 +20,8 @@ public class CommentController {
     }
 
     @GetMapping("/list-comment")
-    public List<CommentResponseDto> listComment() {
-        return commentService.getAllComment();
+    public Page<CommentResponseDto> listComment(CommentFilterRequest filterRequest, @RequestParam int page, @RequestParam int size) {
+        return commentService.getAllComment(filterRequest, page, size);
     }
 
     @GetMapping("/list-comment/{id}")

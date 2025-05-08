@@ -9,6 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CategoryRequestDto {
     private String categoryName;
-    private String description;
-    private Long adminId;
+    private String categoryDescription;
 }

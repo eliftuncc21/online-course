@@ -6,22 +6,17 @@ import org.example.onlinecourse.model.Admin;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.Mappings;
-
-import java.util.List;
+import org.mapstruct.Context;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Mapper(componentModel = "spring")
 public interface AdminMapper {
-    Admin toAdmin(AdminRequestDto adminRequestDto);
 
-    @Mappings({
-            @Mapping(source = "user", target = "userResponse")
-    })
+    @Mapping(target = "password", expression = "java(passwordEncoder.encode(adminRequestDto.getPassword()))")
+    Admin toAdmin(AdminRequestDto adminRequestDto, @Context BCryptPasswordEncoder passwordEncoder);
 
     AdminResponseDto toAdminResponseDto(Admin admin);
 
-    List<AdminResponseDto> toAdminResponseDtoList(List<Admin> adminList);
-
-    @Mapping(target = "adminId", ignore = true)
+    @Mapping(target = "userId", ignore = true)
     void updateAdmin(AdminRequestDto adminRequestDto, @MappingTarget Admin admin);
 }

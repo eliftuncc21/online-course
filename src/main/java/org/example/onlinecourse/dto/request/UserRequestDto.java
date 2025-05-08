@@ -24,6 +24,10 @@ public class UserRequestDto {
     @Email
     private String email;
 
+    @NotBlank
+    @Size(min = 8, max = 50)
+    private String password;
+
     private ActiveStatus isActive;
 
     @NotBlank

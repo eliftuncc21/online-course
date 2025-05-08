@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Table(name = "sub_category")
 @Data
@@ -17,12 +19,15 @@ public class SubCategory {
     private Long subCategoryId;
 
     @Column(name = "category_name")
-    private String categoryName;
+    private String subCategoryName;
 
     @Column(name = "description")
-    private String description;
+    private String subDescription;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @OneToMany(mappedBy = "subCategory")
+    private List<Course> course;
 }

@@ -1,19 +1,21 @@
 package org.example.onlinecourse.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.onlinecourse.dto.request.EnrollmentRequestDto;
 import org.example.onlinecourse.dto.response.EnrollmentResponseDto;
+import org.example.onlinecourse.exception.ErrorMessage;
+import org.example.onlinecourse.exception.MessageType;
 import org.example.onlinecourse.mapper.EnrollmentMapper;
-import org.example.onlinecourse.model.Course;
-import org.example.onlinecourse.model.Enrollment;
-import org.example.onlinecourse.model.EnrollmentStatus;
-import org.example.onlinecourse.model.Student;
+import org.example.onlinecourse.model.*;
 import org.example.onlinecourse.repository.CourseRepository;
 import org.example.onlinecourse.repository.EnrollmentRepository;
 import org.example.onlinecourse.repository.StudentRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,35 +24,65 @@ public class EnrollmentService {
     private final EnrollmentMapper enrollmentMapper;
     private final CourseRepository courseRepository;
     private final StudentRepository studentRepository;
+    private final MailService mailService;
 
+    @Transactional
     public EnrollmentResponseDto save(EnrollmentRequestDto enrollmentRequestDto) {
-        Student student = studentRepository.findById(enrollmentRequestDto.getStudentId()).orElse(null);
-        Course course = courseRepository.findById(enrollmentRequestDto.getCourseId()).orElse(null);
-        Enrollment enrollment = enrollmentMapper.toEnrollment(enrollmentRequestDto);
-        enrollment.setStudent(student);
-        enrollment.setCourse(course);
-        enrollment.setEnrollmentStatus(EnrollmentStatus.ENROLLED);
-        Enrollment dbEnrollment = enrollmentRepository.save(enrollment);
+        Student student = studentRepository.findById(enrollmentRequestDto.getStudentId())
+                .orElseThrow(() -> new ErrorMessage(
+                        MessageType.STUDENT_NOT_FOUND,
+                        "Student not found",
+                        HttpStatus.NOT_FOUND)
+                );
 
-        return enrollmentMapper.toEnrollmentResponseDto(dbEnrollment);
-    }
+        Course course = courseRepository.findById(enrollmentRequestDto.getCourseId())
+                .orElseThrow(() -> new ErrorMessage(
+                        MessageType.COURSE_NOT_FOUND,
+                        "Course not found",
+                        HttpStatus.NOT_FOUND)
+                );
 
-    public EnrollmentResponseDto getEnrollmentById(long id) {
-        Enrollment enrollment = enrollmentRepository.findById(id).orElse(null);
+        Enrollment enrollment = enrollmentMapper.toEnrollment(enrollmentRequestDto, student, course);
+
+        enrollmentRepository.save(enrollment);
+        mailService.sendRegistrationCourse(student.getEmail(), course.getTitle());
+        int courseCount = enrollmentRepository.countByStudent(student);
+        student.setTotalCourseCount(courseCount);
+        studentRepository.save(student);
         return enrollmentMapper.toEnrollmentResponseDto(enrollment);
     }
 
-    public List<EnrollmentResponseDto> getAllEnrollments() {
-        List<Enrollment> enrollments = enrollmentRepository.findAll();
-        return enrollmentMapper.toEnrollmentResponseDtoList(enrollments);
+    public EnrollmentResponseDto getEnrollmentById(long id) {
+        Enrollment enrollment = enrollmentRepository.findById(id)
+                .orElseThrow(()-> new ErrorMessage(
+                        MessageType.ENROLLMENT_NOT_FOUND,
+                        "Enrollment not found",
+                        HttpStatus.NOT_FOUND
+                ));
+        return enrollmentMapper.toEnrollmentResponseDto(enrollment);
     }
 
-    public EnrollmentResponseDto updateEnrollment(long id, EnrollmentRequestDto enrollmentRequestDto) {
-        Enrollment enrollment = enrollmentRepository.findById(id).orElse(null);
-        enrollmentMapper.updateEnrollment(enrollmentRequestDto, enrollment);
-        enrollment.setEnrollmentStatus(EnrollmentStatus.COMPLETED);
-        Enrollment dbEnrollment = enrollmentRepository.save(enrollment);
-        return enrollmentMapper.toEnrollmentResponseDto(dbEnrollment);
+    public Page<EnrollmentResponseDto> getAllEnrollments(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return enrollmentRepository.findAll(pageable).map(enrollmentMapper::toEnrollmentResponseDto);
+    }
+
+    @Transactional
+    public EnrollmentResponseDto updateEnrollment(long id) {
+        Enrollment enrollment = enrollmentRepository.findById(id)
+                .orElseThrow(()-> new ErrorMessage(
+                        MessageType.ENROLLMENT_NOT_FOUND,
+                        "Enrollment not found",
+                        HttpStatus.NOT_FOUND
+                ));
+        Enrollment updateEnrollment = enrollmentMapper.toUpdateEnrollment(enrollment, enrollment);
+
+        Student student = updateEnrollment.getStudent();
+        int courseCount = enrollmentRepository.countByStudentAndEnrollmentStatus(student, EnrollmentStatus.COMPLETED);
+        student.setCompletedCourseCount(courseCount);
+        studentRepository.save(student);
+        enrollmentRepository.save(updateEnrollment);
+        return enrollmentMapper.toEnrollmentResponseDto(enrollment);
     }
 
     public void deleteEnrollment(long id) {

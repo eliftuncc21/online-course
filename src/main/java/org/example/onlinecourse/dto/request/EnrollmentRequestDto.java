@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EnrollmentRequestDto {
     @NotNull
-    Long studentId;
+    private Long studentId;
     @NotNull
-    Long courseId;
+    private Long courseId;
 }

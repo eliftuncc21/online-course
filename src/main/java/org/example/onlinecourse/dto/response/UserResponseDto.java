@@ -3,6 +3,7 @@ package org.example.onlinecourse.dto.response;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.onlinecourse.model.ActiveStatus;
 import org.example.onlinecourse.model.Role;
 
 @Data
@@ -14,7 +15,6 @@ public class UserResponseDto {
     private String lastName;
     private String email;
     private String telephoneNumber;
-    private Integer completedCourseCount;
-    private Integer totalCourseCount;
+    private ActiveStatus isActive;
     private Role role;
 }

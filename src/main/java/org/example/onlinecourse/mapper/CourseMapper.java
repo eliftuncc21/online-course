@@ -3,19 +3,19 @@ package org.example.onlinecourse.mapper;
 import org.example.onlinecourse.dto.request.CourseRequestDto;
 import org.example.onlinecourse.dto.response.CourseResponseDto;
 import org.example.onlinecourse.model.Course;
+import org.example.onlinecourse.model.Instructor;
+import org.example.onlinecourse.model.SubCategory;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-import java.util.List;
-
-@Mapper(componentModel = "spring", uses = {InstructorMapper.class, CategoryMapper.class})
+@Mapper(componentModel = "spring", uses = {InstructorMapper.class, SubCategoryMapper.class})
 public interface CourseMapper {
-    Course toCourse(CourseRequestDto courseRequestDto);
+    @Mapping(target = "instructor", expression = "java(instructor)")
+    @Mapping(target = "subCategory", expression = "java(subCategory)")
+    Course toCourse(CourseRequestDto courseRequestDto, Instructor instructor, SubCategory subCategory);
 
     CourseResponseDto toCourseResponseDto(Course course);
-
-    List<CourseResponseDto> toCourseResponseDtoList(List<Course> courses);
 
     @Mapping(target= "courseId", ignore = true)
     void updateCourse(CourseRequestDto courseRequestDto,@MappingTarget Course course);

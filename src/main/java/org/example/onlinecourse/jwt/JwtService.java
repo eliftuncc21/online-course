@@ -25,7 +25,7 @@ public class JwtService {
         String role = ((User) userDetails).getRole().name();
         claimsMap.put("role", role);
         return Jwts.builder()
-                .setSubject(((User) userDetails).getEmail())
+                .setSubject((((User) userDetails).getEmail()))
                 .addClaims(claimsMap)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 2))

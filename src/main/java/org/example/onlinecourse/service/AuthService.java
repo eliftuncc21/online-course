@@ -3,11 +3,14 @@ package org.example.onlinecourse.service;
 import lombok.RequiredArgsConstructor;
 import org.example.onlinecourse.dto.request.LoginRequestDto;
 import org.example.onlinecourse.dto.response.LoginResponseDto;
+import org.example.onlinecourse.exception.ErrorMessage;
+import org.example.onlinecourse.exception.MessageType;
 import org.example.onlinecourse.jwt.JwtService;
 import org.example.onlinecourse.model.RefreshToken;
 import org.example.onlinecourse.model.User;
 import org.example.onlinecourse.repository.RefreshTokenRepository;
 import org.example.onlinecourse.repository.UserRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -32,9 +35,12 @@ public class AuthService {
             refreshTokenRepository.save(refreshToken);
             return new LoginResponseDto(accessToken, refreshToken.getRefreshToken());
         } catch (Exception e) {
-            System.out.println("Kullanıcı adı veya şifre hatalı");
+            throw new ErrorMessage(
+                    MessageType.USER_NOT_FOUND,
+                    "Authentication Failed",
+                    HttpStatus.UNAUTHORIZED
+            );
         }
-        return null;
     }
 
     public RefreshToken createRefreshToken(User user) {

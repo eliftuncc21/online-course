@@ -10,9 +10,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdminResponseDto {
-    private Long adminId;
+public class AdminResponseDto extends UserResponseDto{
     private AuthorityLevel authorityLevel;
     private LocalDateTime lastLoginDate;
-    private UserResponseDto userResponse;
 }

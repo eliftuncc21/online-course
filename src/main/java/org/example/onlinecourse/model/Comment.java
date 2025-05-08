@@ -26,7 +26,7 @@ public class Comment {
     private LocalDate commentDate;
 
     @ManyToOne
-    @JoinColumn(name = "student_id")
+    @JoinColumn(name = "student_ird")
     private Student student;
 
     @ManyToOne

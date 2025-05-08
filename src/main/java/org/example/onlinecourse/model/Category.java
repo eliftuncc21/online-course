@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.util.List;
 
 @Entity
@@ -23,14 +22,11 @@ public class Category {
     private String categoryName;
 
     @Column(name = "description")
-    private String description;
+    private String categoryDescription;
 
     @ManyToOne
     @JoinColumn(name = "admin_id")
     private Admin admin;
-
-    @OneToMany(mappedBy = "category")
-    private List<Course> courses;
 
     @OneToMany(mappedBy = "category")
     private List<SubCategory> subCategoryDetails;

@@ -1,12 +1,14 @@
 package org.example.onlinecourse.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.onlinecourse.dto.request.InstructorFilterRequest;
 import org.example.onlinecourse.dto.request.InstructorRequestDto;
 import org.example.onlinecourse.dto.response.InstructorResponseDto;
 import org.example.onlinecourse.service.InstructorService;
+import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -15,13 +17,13 @@ public class InstructorController {
     private final InstructorService instructorService;
 
     @PostMapping("/save-instructor")
-    public InstructorResponseDto saveInstructor(@RequestBody InstructorRequestDto instructorRequestDto) {
+    public InstructorResponseDto saveInstructor(@RequestBody @Valid InstructorRequestDto instructorRequestDto) {
         return instructorService.addInstructors(instructorRequestDto);
     }
 
     @GetMapping("/list-instructor")
-    public List<InstructorResponseDto> listInstructors() {
-        return instructorService.listInstructors();
+    public Page<InstructorResponseDto> listInstructors(InstructorFilterRequest filterRequest,@RequestParam int page, @RequestParam int size) {
+        return instructorService.listInstructors(filterRequest, page, size);
     }
 
     @GetMapping("/list-instructor/{id}")
@@ -30,12 +32,14 @@ public class InstructorController {
     }
 
     @DeleteMapping("/delete-instructor/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('INSTRUCTOR')")
     public void deleteInstructor(@PathVariable long id) {
         instructorService.deleteInstructor(id);
     }
 
     @PutMapping("/update-instructor/{id}")
-    public InstructorResponseDto updateInstructor(@RequestBody InstructorRequestDto instructorRequestDto, @PathVariable long id) {
+    @PreAuthorize("hasRole('ADMIN') or hasRole('INSTRUCTOR')")
+    public InstructorResponseDto updateInstructor(@RequestBody @Valid InstructorRequestDto instructorRequestDto, @PathVariable long id) {
         return instructorService.updateInstructor(id, instructorRequestDto);
     }
 }

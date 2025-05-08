@@ -1,12 +1,12 @@
 package org.example.onlinecourse.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.onlinecourse.dto.request.EnrollmentRequestDto;
 import org.example.onlinecourse.dto.response.EnrollmentResponseDto;
 import org.example.onlinecourse.service.EnrollmentService;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -15,13 +15,13 @@ public class EnrollmentController {
     private final EnrollmentService enrollmentService;
 
     @PostMapping("/save-enrollment")
-    public EnrollmentResponseDto addEnrollment(EnrollmentRequestDto enrollmentRequestDto){
+    public EnrollmentResponseDto addEnrollment(@RequestBody @Valid EnrollmentRequestDto enrollmentRequestDto){
         return enrollmentService.save(enrollmentRequestDto);
     }
 
     @GetMapping("/list-enrollment")
-    public List<EnrollmentResponseDto> listEnrollment(){
-        return enrollmentService.getAllEnrollments();
+    public Page<EnrollmentResponseDto> listEnrollment(@RequestParam int page, @RequestParam int size) {
+        return enrollmentService.getAllEnrollments(page, size);
     }
 
     @GetMapping("/list-enrollment/{id}")
@@ -35,8 +35,8 @@ public class EnrollmentController {
     }
 
     @PutMapping("/update-enrollment/{id}")
-    public EnrollmentResponseDto updateEnrollment(@PathVariable Long id, @RequestBody EnrollmentRequestDto requestDto){
-        return enrollmentService.updateEnrollment(id, requestDto);
+    public EnrollmentResponseDto updateEnrollment(@PathVariable @Valid Long id){
+        return enrollmentService.updateEnrollment(id);
     }
 
 }

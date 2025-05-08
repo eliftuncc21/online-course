@@ -7,10 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class InstructorResponseDto {
-    private Long instructorId;
+public class InstructorResponseDto extends UserResponseDto{
     private String biography;
-    private boolean isActive;
     private Integer totalCourseCount;
-    private UserResponseDto userResponse;
 }

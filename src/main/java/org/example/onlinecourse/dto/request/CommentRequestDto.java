@@ -11,6 +11,5 @@ import lombok.NoArgsConstructor;
 public class CommentRequestDto {
     @NotBlank
     private String comment;
-    private Long studentId;
     private Long courseId;
 }

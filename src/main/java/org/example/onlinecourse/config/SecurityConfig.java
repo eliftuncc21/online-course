@@ -5,17 +5,28 @@ import org.example.onlinecourse.jwt.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
     public final String AUTHENTICATE = "/authenticate";
-    public final String REGISTER = "/rest/api/course-users/save-users";
+    public final String[] REGISTER = {
+            "/rest/api/admin/save-admin",
+            "/rest/api/student/save-student",
+            "/rest/api/instructor/save-instructor"
+    };
     public final String REFRESH_TOKEN = "/refreshToken";
+    public final String[] SWAGGER_PATHS = {
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/swagger-ui.html"
+    };
 
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -24,19 +35,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf-> csrf.disable())
                 .authorizeHttpRequests(request ->
-                 request.requestMatchers(AUTHENTICATE, REGISTER, REFRESH_TOKEN)
+                 request.requestMatchers(AUTHENTICATE, REFRESH_TOKEN)
                 .permitAll()
-                .requestMatchers(
-                        "/rest/api/course/**",
-                        "/rest/api/comment/**",
-                        "/rest/api/enrollment/**",
-                        "/rest/api/category/**",
-                        "/rest/api/instructor/**",
-                        "/rest/api/sub-category/**").hasAuthority("ROLE_ADMIN")
-                .requestMatchers(
-                        "/rest/api/course/**",
-                        "/rest/api/comment/**",
-                        "/rest/api/enrollment/**").hasAuthority("ROLE_INSTRUCTOR")
+                .requestMatchers(REGISTER).permitAll()
+                .requestMatchers(SWAGGER_PATHS).permitAll()
                 .anyRequest().authenticated())
                 .sessionManagement(session-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)

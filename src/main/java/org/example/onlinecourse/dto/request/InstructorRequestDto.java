@@ -8,10 +8,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class InstructorRequestDto {
+public class InstructorRequestDto extends UserRequestDto{
 
     @NotBlank
     private String biography;
-    private boolean isActive;
-    private Long userId;
 }

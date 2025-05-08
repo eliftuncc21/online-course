@@ -8,10 +8,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class StudentResponseDto {
-    private Long studentId;
+public class StudentResponseDto extends UserResponseDto{
     private LocalDate birthDate;
     private LocalDate registrationDate;
-    private boolean isActive;
-    private UserResponseDto userResponse;
 }

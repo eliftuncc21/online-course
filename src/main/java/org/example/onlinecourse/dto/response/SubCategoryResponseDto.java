@@ -8,9 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SubCategoryResponseDto {
-    private Long categoryId;
-    private String categoryName;
-    private String description;
+    private Long subCategoryId;
+    private String subCategoryName;
+    private String subDescription;
     private CategoryResponseDto categoryResponseDto;
-
 }

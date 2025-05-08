@@ -22,5 +22,6 @@ public class RefreshToken {
     private Date expiredDate;
 
     @ManyToOne
+    @JoinColumn(name = "student_id")
     private User user;
 }

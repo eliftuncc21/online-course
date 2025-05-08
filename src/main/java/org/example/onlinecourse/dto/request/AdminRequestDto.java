@@ -9,8 +9,7 @@ import org.example.onlinecourse.model.AuthorityLevel;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdminRequestDto {
+public class AdminRequestDto extends UserRequestDto{
     @NotBlank(message = "Yetki seviyesi boş olamaz")
     private AuthorityLevel authorityLevel;
-    private Long userId;
 }

@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.time.LocalDateTime;
+import org.example.onlinecourse.model.Difficulty;
 
 @Data
 @NoArgsConstructor
@@ -17,6 +17,6 @@ public class CourseRequestDto {
     private double price;
     private int courseDuration;
     private String courseUrl;
-    private Long instructorId;
-    private Long categoryId;
+    private Difficulty difficulty;
+    private Long subCategoryId;
 }
